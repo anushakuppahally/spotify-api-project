@@ -1,9 +1,6 @@
 from inspect import getargs
 import os
-#from app.music_report import CLIENT_CREDENTIALS_MANAGER
 import spotipy
-import sys
-import time
 import logging
 import requests
 import pandas as pd
@@ -37,10 +34,8 @@ def GetArtist(artist):
     result = spotify.search(artist) #search query
     artist_uri = result['tracks']['items'][0]['artists'][0]['uri']
     return artist_uri
-    #artist='Birdy'
-    #artist_id='spotify:artist:2WX2uTcsvV5OnS0inACecP'
 
-def ArtistAlbums(artist_uri):
+def ArtistMusic(artist_uri):
     r = requests.get(BASE_URL + 'artists/' + str(artist_uri[15:]) + '/albums', 
                  headers=headers,
                  params={'include_groups': 'album', 'limit': 50})
@@ -48,6 +43,12 @@ def ArtistAlbums(artist_uri):
     print("Here are the artist's albums:")
     for album in d['items']:
         print(album['name'], ' — Released:', album['release_date'],' — Total Tracks:', album['total_tracks'])
+    print("") #spacing
+    print("Here are the artist's top tracks in the US:")
+    tracks = spotify.artist_top_tracks(artist_uri,country='US')
+    for top in tracks['tracks']:
+        logger.info(top['name'])
+    print("")
 
 def ArtistRecommendations(artist_uri):
     recs = spotify.recommendations(seed_artists=[artist_uri])
@@ -55,13 +56,18 @@ def ArtistRecommendations(artist_uri):
     for track in recs['tracks']:
         logger.info('Recommendation: %s - %s', track['name'],
                     track['artists'][0]['name'])
+    print("") #spacing
+    print("Here are some other related artists based on the artist entered:")
+    artistrecs = spotify.artist_related_artists(artist_uri)
+    for person in artistrecs['artists']:
+        logger.info(person['name'])
 
 def main():
     artist = input("Please enter the name of an artist: ")
     artist_uri = GetArtist(artist)
     if artist_uri:
         print("") #spacing
-        ArtistAlbums(artist_uri)
+        ArtistMusic(artist_uri)
         print("") #spacing
         ArtistRecommendations(artist_uri)
     else:
