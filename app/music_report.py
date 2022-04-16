@@ -9,7 +9,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 
 load_dotenv()
 
-import artist_id from app.artist_analysis
+import artist_uri from app.artist_analysis
 
 SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 SENDER_EMAIL_ADDRESS = os.getenv("SENDER_EMAIL_ADDRESS")
