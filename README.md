@@ -23,12 +23,12 @@ pip install -r requirements.txt
 
 ## Configuration
 
-Sign up for a Spotify developer's account and create a new app. Locate the Client ID and Client Secret for your app. Also, sign up for a SendGrid account, configure your account's email address (i.e. `SENDER_EMAIL_ADDRESS`), and obtain an API key (i.e. `SENDGRID_API_KEY`). Create a new file called .env and paste the following values inside, using your own credentials:
+Sign up for a Spotify developer's account and create a new app. Locate the Client ID and Client Secret for your app (i.e. `SPOTIPY_CLIENT_ID` and `SPOTIPY_CLIENT_SECRET`). Also, sign up for a SendGrid account, configure your account's email address (i.e. `SENDER_ADDRESS`), and obtain an API key (i.e. `SENDGRID_API_KEY`). Create a new file called .env and paste the following values inside, using your own credentials:
 
-SENDER_ADDRESS="____"
-SENDGRID_API_KEY="____"
-SPOTIPY_CLIENT_ID = '____'
-SPOTIPY_CLIENT_SECRET = '____'
+`SENDER_ADDRESS="_______________"`
+`SENDGRID_API_KEY="_______________"`
+`SPOTIPY_CLIENT_ID = '_______________'`
+`SPOTIPY_CLIENT_SECRET = '_______________'`
 
 ## Usage
 
