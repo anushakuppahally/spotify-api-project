@@ -2,10 +2,15 @@ import os
 import spotipy
 import time
 import pandas as pd
+import logging
+import requests
 from dotenv import load_dotenv
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from spotipy.oauth2 import SpotifyClientCredentials
+import plotly.express as px
+
+from app.artist_analysis import GetArtist
 
 load_dotenv()
 
@@ -32,6 +37,29 @@ headers = {'Authorization': 'Bearer {token}'.format(token=access_token)}
 logger = logging.getLogger('examples.artist_recommendations')
 logging.basicConfig(level='INFO')
 
-def AudioAnalysis():
+
+def AudioAnalysis(artist_uri):
     #create a dataframe with all of the tracks from the artist selected by the user 
     #then create averages/graphs with this information  
+    albums = spotify.artist_albums(artist_uri)
+    for album in albums:
+        print(album)
+    
+    
+
+
+
+    #data features
+    df = pd.DataFrame(tracks, columns = ['name','album','artist','release_date','length','popularity','danceability','acousticness','energy','instrumentalness','liveness','loudness','speechiness','tempo','time_signature'])
+
+def main():
+    artist = input("Please enter the name of an artist that you want an email report: ")
+    try:
+        artist_uri = GetArtist(artist)
+        AudioAnalysis(artist_uri)
+    except:
+        print("Can't find that artist, try again.")
+        return None
+
+if __name__ == '__main__':
+    main()

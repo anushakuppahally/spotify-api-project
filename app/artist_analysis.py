@@ -46,32 +46,34 @@ def ArtistMusic(artist_uri):
     print("") #spacing
     print("Here are the artist's top tracks in the US:")
     tracks = spotify.artist_top_tracks(artist_uri,country='US')
-    for top in tracks['tracks']:
-        logger.info(top['name'])
+    for top in tracks['tracks'][:5]: #returns top 5 tracks in the US 
+        print(top['name'])
     print("")
 
 def ArtistRecommendations(artist_uri):
     recs = spotify.recommendations(seed_artists=[artist_uri])
     print("Here are recommended tracks based on the artist entered:")
     for track in recs['tracks']:
-        logger.info('Recommendation: %s - %s', track['name'],
-                    track['artists'][0]['name'])
+        print(track['name'],"by",track['artists'][0]['name']) #returns track name and artist
     print("") #spacing
     print("Here are some other related artists based on the artist entered:")
     artistrecs = spotify.artist_related_artists(artist_uri)
     for person in artistrecs['artists']:
-        logger.info(person['name'])
+        print(person['name'])
 
 def main():
     artist = input("Please enter the name of an artist: ")
-    artist_uri = GetArtist(artist)
-    if artist_uri:
+    try:
+        artist_uri = GetArtist(artist)
         print("") #spacing
         ArtistMusic(artist_uri)
         print("") #spacing
         ArtistRecommendations(artist_uri)
-    else:
+        print("") #spacing
+        
+    except:
         print("Can't find that artist, try again.")
+        return None
 
 if __name__ == '__main__':
     main()
