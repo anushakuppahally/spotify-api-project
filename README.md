@@ -35,9 +35,16 @@ Sign up for a Spotify developer's account and create a new app. Locate the Clien
 
 ## Usage
 
-Get a report on an entered artist's discography and receive recommendations based on this artist. 
+Get information and recommendations based on any artist. 
 
 ```sh
 python -m app.artist_analysis
+
+```
+
+Get an email report regarding the characteristics of an artist's discography 
+
+```sh
+python -m app.music_report
 
 ```
