@@ -1,7 +1,6 @@
 from inspect import getargs
 import os
 import spotipy
-import logging
 import requests
 import time
 from dotenv import load_dotenv
@@ -26,9 +25,6 @@ auth_response_data = auth_response.json()
 # save the access token
 access_token = auth_response_data['access_token']
 headers = {'Authorization': 'Bearer {token}'.format(token=access_token)}
-
-logger = logging.getLogger('examples.artist_recommendations')
-logging.basicConfig(level='INFO')
 
 def GetArtist(artist):
     result = spotify.search(artist) #search query

@@ -1,7 +1,6 @@
 import os
 import spotipy
 import pandas as pd
-import logging
 import requests
 from dotenv import load_dotenv
 from sendgrid import SendGridAPIClient
@@ -33,23 +32,34 @@ auth_response_data = auth_response.json()
 access_token = auth_response_data['access_token']
 headers = {'Authorization': 'Bearer {token}'.format(token=access_token)}
 
-logger = logging.getLogger('examples.artist_recommendations')
-logging.basicConfig(level='INFO')
-
 
 def AudioAnalysis(artist_uri):
-    #create a dataframe with all of the tracks from the artist selected by the user 
-    #then create averages/graphs with this information  
-    albums = spotify.artist_albums(artist_uri)
-    for album in albums:
-        print(album)
+    #creates a dataframe with all of the tracks from the artist selected by the user 
+    #then creates data visualizations with this information  
     
+    r = requests.get(BASE_URL + 'artists/' + str(artist_uri[15:]) + '/albums', 
+                    headers=headers,
+                    params={'include_groups': 'album', 'limit': 50})
+    d = r.json()
     
+    albums = [] #holds album ids for an artist 
+    
+    for album in d['items']:
+        album_ids = album['id']
+        albums.append(str(album_ids))
 
+    ids = []
+
+    for album in albums:
+        tracks = spotify.album_tracks(album)
+        for item in tracks:
+            track = item['track']
+            ids.append(track['id'])
+        return ids
 
 
     #data features
-    df = pd.DataFrame(tracks, columns = ['name','album','artist','release_date','length','popularity','danceability','acousticness','energy','instrumentalness','liveness','loudness','speechiness','tempo','time_signature'])
+    #df = pd.DataFrame(tracks, columns = ['name','album','artist','release_date','length','popularity','danceability','acousticness','energy','instrumentalness','liveness','loudness','speechiness','tempo','time_signature'])
 
 def main():
     artist = input("Please enter the name of an artist that you want an email report: ")
