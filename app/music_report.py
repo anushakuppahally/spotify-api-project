@@ -1,6 +1,5 @@
 import os
 import spotipy
-import time
 import pandas as pd
 import logging
 import requests
