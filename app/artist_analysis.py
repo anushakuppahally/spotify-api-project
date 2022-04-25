@@ -66,7 +66,6 @@ def main():
         print("") #spacing
         time.sleep(2)
         ArtistMusic(artist_uri)
-        print("") #spacing
         time.sleep(2)
         ArtistRecommendations(artist_uri)
         print("") #spacing
