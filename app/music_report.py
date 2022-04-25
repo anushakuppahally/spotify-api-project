@@ -59,7 +59,38 @@ def AudioAnalysis(artist_uri):
 
 
     #data features
-    #df = pd.DataFrame(tracks, columns = ['name','album','artist','release_date','length','popularity','danceability','acousticness','energy','instrumentalness','liveness','loudness','speechiness','tempo','time_signature'])
+
+    tracks = []
+
+    for i in range(len(ids)):
+        track = GetCharacteristics(ids[i])
+        tracks.append(track)
+
+    #df = pd.DataFrame(tracks, columns = ['name','album','artist','release_date','length','popularity','acousticness','danceability','energy','instrumentalness','liveness','loudness','speechiness','tempo','time_signature'])
+
+def GetCharacteristics(id):
+    meta = spotify.track(id)
+    features = spotify.audio_features(id)
+    name = meta['name']
+    album = meta['album']['name']
+    artist = meta['album']['artists'][0]['name']
+    release_date = meta['album']['release_date']
+    length = meta['duration_ms']
+    popularity = meta['popularity']
+
+    # features
+    acousticness = features[0]['acousticness']
+    danceability = features[0]['danceability']
+    energy = features[0]['energy']
+    instrumentalness = features[0]['instrumentalness']
+    liveness = features[0]['liveness']
+    loudness = features[0]['loudness']
+    speechiness = features[0]['speechiness']
+    tempo = features[0]['tempo']
+    time_signature = features[0]['time_signature']
+
+    track = [name, album, artist, release_date, length, popularity, acousticness, danceability, energy, instrumentalness, liveness, loudness, speechiness, tempo, time_signature]
+    return track
 
 def main():
     artist = input("Please enter the name of an artist that you want an email report: ")
