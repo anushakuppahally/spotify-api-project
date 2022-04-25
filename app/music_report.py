@@ -7,6 +7,8 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from spotipy.oauth2 import SpotifyClientCredentials
 import plotly.express as px
+import matplotlib.pyplot as plt
+import time
 
 from app.artist_analysis import GetArtist
 
@@ -51,22 +53,68 @@ def AudioAnalysis(artist_uri):
     ids = [] #holds track ids 
 
     for album in albums:
-        tracks = spotify.album_tracks(album)
-        for item in tracks['items']: #getting track ids for each track in each album
-            track = item['track']
-            ids.append(track['id'])
-    #print(tracks)
-
+        songs = spotify.album_tracks(album)
+        for item in songs['items']: #getting track ids for each track in each album
+            track = item['id']
+            ids.append(track)
 
     #data features
 
     tracks = []
 
     for i in range(len(ids)):
-        track = GetCharacteristics(ids[i])
+        time.sleep(.01)
+        id = ids[i]
+        track = GetCharacteristics(id)
         tracks.append(track)
 
-    #df = pd.DataFrame(tracks, columns = ['name','album','artist','release_date','length','popularity','acousticness','danceability','energy','instrumentalness','liveness','loudness','speechiness','tempo','time_signature'])
+    df = pd.DataFrame(tracks, columns = ['name','album','artist','release_date','length','popularity','acousticness','danceability','energy','instrumentalness','liveness','loudness','speechiness','tempo','time_signature'])
+
+    #data visualizations
+    
+    #popularity histogram 
+    pop_hist = plt.hist(df['Popularity'],bins=10, align='right', color='blue', edgecolor='black')
+
+    popularity = df["popularity"]
+    acousticness = df["acousticness"]
+    danceability = df["danceability"]
+    energy = df["energy"]
+    instrumentalness = df["instrumentalness"]
+    liveness = df["liveness"]
+    loudness = df["loudness"]
+    speechiness = df["speechiness"]
+    tempo = df["tempo"]
+    time_signature = df["time_signature"]
+    features = [acousticness,danceability,energy,instrumentalness,liveness,loudness,speechiness,tempo,time_signature]
+    
+    correlations = [] #storing the correlations between each variable and popularity 
+
+    for j in range(len(features)):
+        corr = popularity.corr(j)
+        correlations.append(corr)
+
+    #finding the variable most correlated with popularity 
+    max_corr = max(correlations) 
+    max_corr_index = correlations.index(max_corr)
+
+    #scatterplot of variable most correlated with popularity 
+
+    #finding the variable least correlated with popularity 
+    min_corr = min(correlations) 
+    min_corr_index = correlations.index(min_corr)
+
+    #scatterplot of variable least correlated with popularity 
+    
+    #email
+    subject="Unemployment"
+    html="<p>Unemployment Report</p>"
+
+    client = SendGridAPIClient(SENDGRID_API_KEY) #> <class 'sendgrid.sendgrid.SendGridAPIClient>
+    message = Mail(from_email=SENDER_EMAIL_ADDRESS, to_emails=SENDER_EMAIL_ADDRESS, subject=subject, html_content=html)
+
+    #send email
+    response = client.send(message)
+    print(response.status_code)
 
 def GetCharacteristics(id):
     meta = spotify.track(id)
@@ -78,7 +126,7 @@ def GetCharacteristics(id):
     length = meta['duration_ms']
     popularity = meta['popularity']
 
-    # features
+    #song features
     acousticness = features[0]['acousticness']
     danceability = features[0]['danceability']
     energy = features[0]['energy']
