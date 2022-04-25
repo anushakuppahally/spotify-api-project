@@ -48,14 +48,14 @@ def AudioAnalysis(artist_uri):
         album_ids = album['id']
         albums.append(str(album_ids))
 
-    ids = []
+    ids = [] #holds track ids 
 
     for album in albums:
         tracks = spotify.album_tracks(album)
-        for item in tracks:
+        for item in tracks['items']: #getting track ids for each track in each album
             track = item['track']
             ids.append(track['id'])
-        return ids
+    #print(tracks)
 
 
     #data features
