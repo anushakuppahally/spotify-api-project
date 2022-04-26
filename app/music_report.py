@@ -8,7 +8,6 @@ from sendgrid.helpers.mail import Mail
 from spotipy.oauth2 import SpotifyClientCredentials
 import plotly.express as px
 import matplotlib.pyplot as plt
-import time
 
 from app.artist_analysis import GetArtist
 from app.artist_analysis import ArtistMusic
@@ -79,6 +78,7 @@ def AudioAnalysis(artist_uri):
     #getting features
     popularity = df["popularity"]
     
+    #factors to calculate correlation with population
     df2 = df[['acousticness','danceability','energy','instrumentalness','liveness','loudness','speechiness','tempo','time_signature']].copy()
 
     correlations = [] #storing the correlations between each variable and popularity 
@@ -102,12 +102,10 @@ def AudioAnalysis(artist_uri):
     #scatterplot of variable least correlated with popularity 
     ax2 = df.plot.scatter(x = str(df2.columns[min_corr_index]),y = 'popularity',c = 'DarkBlue')
 
-    #email
+    #email - need to add function outpus 
     subject="[Email Report]: Artist Analysis"
-    html="<p>Artist Analysis</p>"
-    html+="<p>Testing</p>"
-    html+='<p>'+str(ArtistMusic(artist_uri))+'</p>' #not working
-    #html+=ArtistRecommendations(artist_uri)
+    html="<strong>Artist Analysis</strong>"
+    html+='<p>'+str(ArtistMusic(artist_uri))+'</p>'
     
 
     client = SendGridAPIClient(SENDGRID_API_KEY) #> <class 'sendgrid.sendgrid.SendGridAPIClient>
