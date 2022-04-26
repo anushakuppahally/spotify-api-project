@@ -11,11 +11,13 @@ import matplotlib.pyplot as plt
 import time
 
 from app.artist_analysis import GetArtist
+from app.artist_analysis import ArtistMusic
+from app.artist_analysis import ArtistRecommendations
 
 load_dotenv()
 
 SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
-SENDER_EMAIL_ADDRESS = os.getenv("SENDER_EMAIL_ADDRESS")
+SENDER_EMAIL_ADDRESS = os.getenv("SENDER_ADDRESS")
 CLIENT_ID = os.getenv('SPOTIPY_CLIENT_ID')
 CLIENT_SECRET = os.getenv('SPOTIPY_CLIENT_SECRET')
 spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
@@ -72,55 +74,58 @@ def AudioAnalysis(artist_uri):
     #data visualizations
     
     #popularity histogram 
-    pop_hist = plt.hist(df['popularity'],bins=10, align='right', color='blue', edgecolor='black')
+    #pop_hist = plt.hist(df["popularity"],bins=10, align='right', color='blue', edgecolor='black')
 
     #getting features
-    popularity = df['popularity']
-    acousticness = df['acousticness']
-    danceability = df['danceability']
-    energy = df['energy']
-    instrumentalness = df['instrumentalness']
-    liveness = df['liveness']
-    loudness = df['loudness']
-    speechiness = df['speechiness']
-    tempo = df['tempo']
-    time_signature = df['time_signature']
-    features = [acousticness,danceability,energy,instrumentalness,liveness,loudness,speechiness,tempo,time_signature]
+    popularity = df["popularity"]
     
+    df2 = df[['acousticness','danceability','energy','instrumentalness','liveness','loudness','speechiness','tempo','time_signature']].copy()
+
     correlations = [] #storing the correlations between each variable and popularity 
 
-    for j in range(len(features)):
-        corr = popularity.corr(j)
+    for j in df2:
+        var = df[str(j)]
+        corr = popularity.corr(var)
         correlations.append(corr)
-    print(correlations)
 
     #finding the variable most correlated with popularity 
     max_corr = max(correlations) 
     max_corr_index = correlations.index(max_corr)
 
     #scatterplot of variable most correlated with popularity 
-    ax1 = df.plot.scatter(x = str(correlations[max_corr_index]),y = 'popularity',c = 'DarkBlue')
+    ax1 = df.plot.scatter(x = str(df2.columns[max_corr_index]),y = 'popularity',c = 'DarkBlue')
 
     #finding the variable least correlated with popularity 
     min_corr = min(correlations) 
     min_corr_index = correlations.index(min_corr)
 
     #scatterplot of variable least correlated with popularity 
-    ax2 = df.plot.scatter(x = str(correlations[min_corr_index]),y = 'popularity',c = 'DarkBlue')
-    
-    
+    ax2 = df.plot.scatter(x = str(df2.columns[min_corr_index]),y = 'popularity',c = 'DarkBlue')
+
     #email
-    # subject="[Email Report]: Artist Analysis"
-    # html="<p>Artist Analysis</p>"
+    subject="[Email Report]: Artist Analysis"
+    html="<p>Artist Analysis</p>"
+    html+="<p>Testing</p>"
+    html+='<p>'+str(ArtistMusic(artist_uri))+'</p>' #not working
+    #html+=ArtistRecommendations(artist_uri)
+    
 
-    # client = SendGridAPIClient(SENDGRID_API_KEY) #> <class 'sendgrid.sendgrid.SendGridAPIClient>
-    # message = Mail(from_email=SENDER_EMAIL_ADDRESS, to_emails=SENDER_EMAIL_ADDRESS, subject=subject, html_content=html)
-    # html += ax1
-    # html += ax2
-
-    # #send email 
-    # response = client.send(message)
-    # print(response.status_code)
+    client = SendGridAPIClient(SENDGRID_API_KEY) #> <class 'sendgrid.sendgrid.SendGridAPIClient>
+    message = Mail(from_email=SENDER_EMAIL_ADDRESS, to_emails=SENDER_EMAIL_ADDRESS, subject=subject, html_content=html)
+    
+    #attaching csv
+    # encoded_csv = base64.b64encode(df.to_csv(index=False).encode()).decode()
+    # message.attachment = Attachment(
+    #     file_content = FileContent(encoded_csv),
+    #     file_type = FileType('text/csv'), 
+    #     file_name = FileName('spotify_report.csv'), 
+    #     disposition = Disposition('attachment'),
+    #     content_id = ContentId('Attachment 1')
+    # )
+    
+    #send email 
+    response = client.send(message)
+    print(response.status_code)
 
 def GetCharacteristics(id):
     meta = spotify.track(id)
