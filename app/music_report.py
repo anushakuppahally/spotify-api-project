@@ -7,8 +7,6 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition, ContentId
 import base64
 from spotipy.oauth2 import SpotifyClientCredentials
-from io import BytesIO
-import plotly.express as px
 import matplotlib.pyplot as plt
 
 from app.artist_analysis import GetArtist
@@ -38,6 +36,7 @@ access_token = auth_response_data['access_token']
 headers = {'Authorization': 'Bearer {token}'.format(token=access_token)}
 
 
+#analyzes the tracks of the entered artist and returns insights in an email report, along with artist analysis and recommendations
 def AudioAnalysis(artist_uri):
     #creates a dataframe with all of the tracks from the artist selected by the user 
     #then creates data visualizations with this information  
@@ -70,12 +69,8 @@ def AudioAnalysis(artist_uri):
         track = GetCharacteristics(id)
         tracks.append(track)
 
+    #creates dataframe with each track's characteristics
     df = pd.DataFrame(tracks, columns = ['name','album','artist','release_date','length','popularity','acousticness','danceability','energy','instrumentalness','liveness','loudness','speechiness','tempo','time_signature'])
-
-    #data visualizations
-    
-    #popularity histogram 
-    #pop_hist = plt.hist(df["popularity"],bins=10, align='right', color='blue', edgecolor='black')
 
     #getting features
     popularity = df["popularity"]
@@ -85,6 +80,7 @@ def AudioAnalysis(artist_uri):
 
     correlations = [] #storing the correlations between each variable and popularity 
 
+    #calculating the correlation between each feature and population 
     for j in df2:
         var = df[str(j)]
         corr = popularity.corr(var)
@@ -94,20 +90,36 @@ def AudioAnalysis(artist_uri):
     max_corr = max(correlations) 
     max_corr_index = correlations.index(max_corr)
 
-    #scatterplot of variable most correlated with popularity 
-    ax1 = df.plot.scatter(x = str(df2.columns[max_corr_index]),y = 'popularity',c = 'DarkBlue')
-
     #finding the variable least correlated with popularity 
     min_corr = min(correlations) 
     min_corr_index = correlations.index(min_corr)
 
+    #data visualizations
+    
+    #popularity histogram 
+    pop_hist = plt.hist(popularity)
+    img_filepath1 = os.path.join(os.path.dirname(__file__), "..", "reports", "pophist.png")
+    pop_hist.write_image(img_filepath1)
+
+    #scatterplot of variable most correlated with popularity 
+    ax1 = df.plot.scatter(x = str(df2.columns[max_corr_index]),y = 'popularity',c = 'DarkBlue')
     #scatterplot of variable least correlated with popularity 
     ax2 = df.plot.scatter(x = str(df2.columns[min_corr_index]),y = 'popularity',c = 'DarkBlue')
+
 
     #email - need to add function outputs 
     subject="[Email Report]: Artist Analysis"
     html="<strong>Artist Analysis</strong>"
     #html+='<p>'+str(ArtistMusic(artist_uri))+'</p>'
+    #html+='<p>'+str(ArtistRecommendations(artist_uri))+'</p>'
+
+    html+="<strong>Song Characteristics Analysis:</strong>"
+
+    html+="<p>Histogram of popularity:</p>"
+    
+    html+="<p>Scatterplot of the variable most correlated with popularity:</p>"
+
+    html+="<p>Scatterplot of the variable least correlated with popularity:</p>"
     
 
     client = SendGridAPIClient(SENDGRID_API_KEY) 
@@ -125,10 +137,27 @@ def AudioAnalysis(artist_uri):
     content_id = ContentId('Attachment 1')
     )
 
+    #making images inline
+    
+    with open(img_filepath1, 'rb') as f:
+        data = f.read()
+        f.close()
+    encoded_img1 = base64.b64encode(data).decode()
+    
+    message.attachment = Attachment(
+    file_content = FileContent(encoded_img1),
+    file_type = FileType('image/png'), 
+    file_name = FileName('pophist.png'), 
+    disposition = Disposition('attachment'),
+    content_id = ContentId('Attachment 2')
+    )
+
+
     #send email 
     response = client.send(message)
-    print(response.status_code)
+    print(response.status_code) #202 means success
 
+#returns characteristics for a track id
 def GetCharacteristics(id):
     meta = spotify.track(id)
     features = spotify.audio_features(id)

@@ -31,13 +31,14 @@ def GetArtist(artist):
     artist_uri = result['tracks']['items'][0]['artists'][0]['uri']
     return artist_uri
 
+#returns information related to the artist 
 def ArtistMusic(artist_uri):
     r = requests.get(BASE_URL + 'artists/' + str(artist_uri[15:]) + '/albums', 
                  headers=headers,
                  params={'include_groups': 'album', 'limit': 50})
     d = r.json()
-    print("Here are the artist's albums:")
-    for album in d['items']:
+    print("Here are the artist's albums:") 
+    for album in d['items']: #returns the artist's albums and their release date and the number of total tracks 
         print(album['name'], ' — Released:', album['release_date'],' — Total Tracks:', album['total_tracks'])
     print("") #spacing
     time.sleep(2)
@@ -47,20 +48,21 @@ def ArtistMusic(artist_uri):
         print(top['name'])
     print("")
 
+#returns recommendations for the entered artist 
 def ArtistRecommendations(artist_uri):
     recs = spotify.recommendations(seed_artists=[artist_uri])
-    print("Here are recommended tracks based on the artist entered:")
+    print("Here are recommended tracks based on the artist entered:") #returns recommended tracks 
     for track in recs['tracks']:
         print(track['name'],"by",track['artists'][0]['name']) #returns track name and artist
     print("") #spacing
     time.sleep(2)
-    print("Here are some other related artists based on the artist entered:")
+    print("Here are some other related artists based on the artist entered:") 
     artistrecs = spotify.artist_related_artists(artist_uri)
-    for person in artistrecs['artists']:
+    for person in artistrecs['artists']: #returns related artists 
         print(person['name'])
 
 def main():
-    artist = input("Please enter the name of an artist: ")
+    artist = input("Please enter the name of an artist: ") #user input 
     try:
         artist_uri = GetArtist(artist)
         print("") #spacing
@@ -71,7 +73,7 @@ def main():
         print("") #spacing
         
     except:
-        print("Can't find that artist, try again.")
+        print("Can't find that artist, try again.") #if spotify can't find the artist entered by the user
         return None
 
 if __name__ == '__main__':

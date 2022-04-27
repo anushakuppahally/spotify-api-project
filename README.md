@@ -42,7 +42,7 @@ python -m app.artist_analysis
 
 ```
 
-Get an email report regarding the characteristics of an artist's discography 
+Get an email report regarding the characteristics of an artist's discography. 
 
 ```sh
 python -m app.music_report
