@@ -4,8 +4,10 @@ import pandas as pd
 import requests
 from dotenv import load_dotenv
 from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition, ContentId
+import base64
 from spotipy.oauth2 import SpotifyClientCredentials
+from io import BytesIO
 import plotly.express as px
 import matplotlib.pyplot as plt
 
@@ -102,25 +104,27 @@ def AudioAnalysis(artist_uri):
     #scatterplot of variable least correlated with popularity 
     ax2 = df.plot.scatter(x = str(df2.columns[min_corr_index]),y = 'popularity',c = 'DarkBlue')
 
-    #email - need to add function outpus 
+    #email - need to add function outputs 
     subject="[Email Report]: Artist Analysis"
     html="<strong>Artist Analysis</strong>"
-    html+='<p>'+str(ArtistMusic(artist_uri))+'</p>'
+    #html+='<p>'+str(ArtistMusic(artist_uri))+'</p>'
     
 
-    client = SendGridAPIClient(SENDGRID_API_KEY) #> <class 'sendgrid.sendgrid.SendGridAPIClient>
+    client = SendGridAPIClient(SENDGRID_API_KEY) 
     message = Mail(from_email=SENDER_EMAIL_ADDRESS, to_emails=SENDER_EMAIL_ADDRESS, subject=subject, html_content=html)
     
-    #attaching csv
-    # encoded_csv = base64.b64encode(df.to_csv(index=False).encode()).decode()
-    # message.attachment = Attachment(
-    #     file_content = FileContent(encoded_csv),
-    #     file_type = FileType('text/csv'), 
-    #     file_name = FileName('spotify_report.csv'), 
-    #     disposition = Disposition('attachment'),
-    #     content_id = ContentId('Attachment 1')
-    # )
+    #creating csv
+    encoded_csv = base64.b64encode(df.to_csv(index=False).encode()).decode()
     
+    #attaching csv
+    message.attachment = Attachment(
+    file_content = FileContent(encoded_csv),
+    file_type = FileType('text/csv'), 
+    file_name = FileName('spotify_report.csv'), 
+    disposition = Disposition('attachment'),
+    content_id = ContentId('Attachment 1')
+    )
+
     #send email 
     response = client.send(message)
     print(response.status_code)
