@@ -2,7 +2,6 @@ from inspect import getargs
 import os
 import spotipy
 import requests
-import time
 from dotenv import load_dotenv
 from spotipy.oauth2 import SpotifyClientCredentials
 
@@ -41,7 +40,6 @@ def ArtistMusic(artist_uri):
     for album in d['items']: #returns the artist's albums and their release date and the number of total tracks 
         print(album['name'], ' — Released:', album['release_date'],' — Total Tracks:', album['total_tracks'])
     print("") #spacing
-    time.sleep(2)
     print("Here are the artist's top tracks in the US:")
     tracks = spotify.artist_top_tracks(artist_uri,country='US')
     for top in tracks['tracks'][:5]: #returns top 5 tracks in the US 
@@ -55,7 +53,6 @@ def ArtistRecommendations(artist_uri):
     for track in recs['tracks']:
         print(track['name'],"by",track['artists'][0]['name']) #returns track name and artist
     print("") #spacing
-    time.sleep(2)
     print("Here are some other related artists based on the artist entered:") 
     artistrecs = spotify.artist_related_artists(artist_uri)
     for person in artistrecs['artists']: #returns related artists 
@@ -66,9 +63,7 @@ def main():
     try:
         artist_uri = GetArtist(artist)
         print("") #spacing
-        time.sleep(2)
         ArtistMusic(artist_uri)
-        time.sleep(2)
         ArtistRecommendations(artist_uri)
         print("") #spacing
         
