@@ -5,3 +5,4 @@ spotipy #python library for spotify api
 pandas #data processing
 requests #web requests
 sendgrid==6.6.0 #email sender
+pytest #testing
