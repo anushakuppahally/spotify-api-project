@@ -1,6 +1,7 @@
 import os
 import spotipy
 import pandas as pd
+import seaborn as sns
 import requests
 from dotenv import load_dotenv
 from sendgrid import SendGridAPIClient
@@ -95,16 +96,23 @@ def AudioAnalysis(artist_uri):
     min_corr_index = correlations.index(min_corr)
 
     #data visualizations
+    script_dir = os.path.dirname(__file__)
+    reports_dir = os.path.join(script_dir,"..", 'reports/ ')
     
     #popularity histogram 
-    pop_hist = plt.hist(popularity)
-    img_filepath1 = os.path.join(os.path.dirname(__file__), "..", "reports", "pophist.png")
-    pop_hist.write_image(img_filepath1)
+    pop_hist = plt.hist(popularity,bins=10,color='purple',edgecolor='black')
+    pop_file_name = "pophist.png"
+    plt.savefig(reports_dir + pop_file_name)
 
     #scatterplot of variable most correlated with popularity 
-    ax1 = df.plot.scatter(x = str(df2.columns[max_corr_index]),y = 'popularity',c = 'DarkBlue')
+    ax1 = sns.lmplot(x = str(df2.columns[max_corr_index]),y = 'popularity',data=df,fit_reg = True)
+    scat_file_name1 = "most_correlated.png"
+    plt.savefig(reports_dir + scat_file_name1)
+
     #scatterplot of variable least correlated with popularity 
-    ax2 = df.plot.scatter(x = str(df2.columns[min_corr_index]),y = 'popularity',c = 'DarkBlue')
+    ax2 = sns.lmplot(x = str(df2.columns[min_corr_index]),y = 'popularity',data=df,fit_reg = True)
+    scat_file_name2 = "least_correlated.png"
+    plt.savefig(reports_dir + scat_file_name2)
 
 
     #email - need to add function outputs 
@@ -137,9 +145,10 @@ def AudioAnalysis(artist_uri):
     content_id = ContentId('Attachment 1')
     )
 
-    #making images inline
+    #attaching images
     
-    with open(img_filepath1, 'rb') as f:
+    #attaching popularity histogram 
+    with open(reports_dir + pop_file_name, 'rb') as f:
         data = f.read()
         f.close()
     encoded_img1 = base64.b64encode(data).decode()
@@ -148,10 +157,37 @@ def AudioAnalysis(artist_uri):
     file_content = FileContent(encoded_img1),
     file_type = FileType('image/png'), 
     file_name = FileName('pophist.png'), 
-    disposition = Disposition('attachment'),
+    disposition = Disposition('inline'),
     content_id = ContentId('Attachment 2')
     )
 
+    #attaching scatterplot of most correlated variable 
+    with open(reports_dir + scat_file_name1, 'rb') as g:
+        data = g.read()
+        g.close()
+    encoded_img2 = base64.b64encode(data).decode()
+    
+    message.attachment = Attachment(
+    file_content = FileContent(encoded_img2),
+    file_type = FileType('image/png'), 
+    file_name = FileName('most_correlated.png'), 
+    disposition = Disposition('inline'),
+    content_id = ContentId('Attachment 3')
+    )
+
+    #attaching scatterplot of least correlated variable 
+    with open(reports_dir + scat_file_name2, 'rb') as h:
+        data = h.read()
+        h.close()
+    encoded_img3 = base64.b64encode(data).decode()
+    
+    message.attachment = Attachment(
+    file_content = FileContent(encoded_img3),
+    file_type = FileType('image/png'), 
+    file_name = FileName('least_correlated.png'), 
+    disposition = Disposition('inline'),
+    content_id = ContentId('Attachment 4')
+    )
 
     #send email 
     response = client.send(message)
