@@ -1,4 +1,6 @@
 import os
+from select import select
+import sys
 import spotipy
 import pandas as pd
 import seaborn as sns
@@ -10,6 +12,7 @@ import base64
 from spotipy.oauth2 import SpotifyClientCredentials
 import matplotlib.pyplot as plt
 
+#using function output in email
 from app.artist_analysis import GetArtist
 from app.artist_analysis import ArtistMusic
 from app.artist_analysis import ArtistRecommendations
@@ -29,10 +32,10 @@ auth_response = requests.post(AUTH_URL, {
         'client_secret': CLIENT_SECRET,
     })
 
-# convert the response to JSON
+#convert the response to json
 auth_response_data = auth_response.json()
 
-# save the access token
+#save the access token
 access_token = auth_response_data['access_token']
 headers = {'Authorization': 'Bearer {token}'.format(token=access_token)}
 
@@ -100,17 +103,17 @@ def AudioAnalysis(artist_uri):
     reports_dir = os.path.join(script_dir,"..", 'reports/ ')
     
     #popularity histogram 
-    pop_hist = plt.hist(popularity,bins=10,color='purple',edgecolor='black')
+    popularity.plot(kind='hist', color='purple',edgecolor='black',title='Popularity Histogram')
     pop_file_name = "pophist.png"
     plt.savefig(reports_dir + pop_file_name)
 
     #scatterplot of variable most correlated with popularity 
-    ax1 = sns.lmplot(x = str(df2.columns[max_corr_index]),y = 'popularity',data=df,fit_reg = True)
+    sns.lmplot(x = str(df2.columns[max_corr_index]),y = 'popularity',data=df,fit_reg = True)
     scat_file_name1 = "most_correlated.png"
     plt.savefig(reports_dir + scat_file_name1)
 
     #scatterplot of variable least correlated with popularity 
-    ax2 = sns.lmplot(x = str(df2.columns[min_corr_index]),y = 'popularity',data=df,fit_reg = True)
+    sns.lmplot(x = str(df2.columns[min_corr_index]),y = 'popularity',data=df,fit_reg = True)
     scat_file_name2 = "least_correlated.png"
     plt.savefig(reports_dir + scat_file_name2)
 
@@ -118,18 +121,14 @@ def AudioAnalysis(artist_uri):
     #email - need to add function outputs 
     subject="[Email Report]: Artist Analysis"
     html="<strong>Artist Analysis</strong>"
+    html+="<p>Information and recommendations for the selected artist</p>"
     #html+='<p>'+str(ArtistMusic(artist_uri))+'</p>'
     #html+='<p>'+str(ArtistRecommendations(artist_uri))+'</p>'
 
     html+="<strong>Song Characteristics Analysis:</strong>"
 
-    html+="<p>Histogram of popularity:</p>"
+    html+="<p>See attached images for a histogram of popularity, a scatterplot between popularity and the most correlated variable, and a scatterplot between popularity and the least correlated variable</p>"
     
-    html+="<p>Scatterplot of the variable most correlated with popularity:</p>"
-
-    html+="<p>Scatterplot of the variable least correlated with popularity:</p>"
-    
-
     client = SendGridAPIClient(SENDGRID_API_KEY) 
     message = Mail(from_email=SENDER_EMAIL_ADDRESS, to_emails=SENDER_EMAIL_ADDRESS, subject=subject, html_content=html)
     
@@ -219,13 +218,20 @@ def GetCharacteristics(id):
     return track
 
 def main():
-    artist = input("Please enter the name of an artist that you want an email report: ")
+    artist = input("Please enter the name of an artist that you want an email report: ") #user input
     try:
         artist_uri = GetArtist(artist)
-        AudioAnalysis(artist_uri)
     except:
-        print("Can't find that artist, try again.")
-        return None
+        print("Can't find that artist, try again.") #error handling
+        sys.exit()
+    else:
+        select_artist = spotify.artist(artist_uri)['name'] #used to check if artist entered is correct based on queried uri
+        correct_artist = input("Is "+select_artist+" the artist you want to analyze? Enter 1 for yes, 0 for no. ")
+        if correct_artist == "1":
+            AudioAnalysis(artist_uri)
+        else:
+            print("Please try again with a more specific search and check for typos.") #exit if artist isn't correct
+            sys.exit()
 
 if __name__ == '__main__':
     main()
