@@ -117,14 +117,14 @@ def AudioAnalysis(artist_uri):
     scat_file_name2 = "least_correlated.png"
     plt.savefig(reports_dir + scat_file_name2)
 
-    artist_music = ArtistMusic
-    #artist_recs = ArtistRecommendations
+    artist_music = ArtistMusic(artist_uri)
+    #artist_recs = ArtistRecommendations()
 
     #email
     subject="[Email Report]: Artist Analysis"
     html="<strong>Artist Analysis</strong>"
     html+="<p>Information and recommendations for the selected artist</p>"
-    html+=f"<p>{artist_music(artist_uri)}</p>"
+    html+=f"<p>{artist_music}</p>"
     #html+='<p>'+str(ArtistMusic(artist_uri))+'</p>'
     #html+='<p>'+str(ArtistRecommendations(artist_uri))+'</p>'
 
