@@ -117,11 +117,14 @@ def AudioAnalysis(artist_uri):
     scat_file_name2 = "least_correlated.png"
     plt.savefig(reports_dir + scat_file_name2)
 
+    artist_music = ArtistMusic
+    #artist_recs = ArtistRecommendations
 
-    #email - need to add function outputs 
+    #email
     subject="[Email Report]: Artist Analysis"
     html="<strong>Artist Analysis</strong>"
     html+="<p>Information and recommendations for the selected artist</p>"
+    html+=f"<p>{artist_music(artist_uri)}</p>"
     #html+='<p>'+str(ArtistMusic(artist_uri))+'</p>'
     #html+='<p>'+str(ArtistRecommendations(artist_uri))+'</p>'
 
@@ -129,6 +132,8 @@ def AudioAnalysis(artist_uri):
 
     html+="<p>See attached images for a histogram of popularity, a scatterplot between popularity and the most correlated variable, and a scatterplot between popularity and the least correlated variable</p>"
     
+    html+="<strong>See the attached csv for the characteristics of each song by the artist</strong>"
+
     client = SendGridAPIClient(SENDGRID_API_KEY) 
     message = Mail(from_email=SENDER_EMAIL_ADDRESS, to_emails=SENDER_EMAIL_ADDRESS, subject=subject, html_content=html)
     
