@@ -48,3 +48,12 @@ Get an email report regarding the characteristics of an artist's discography and
 python -m app.music_report
 
 ```
+
+## Testing
+
+Run tests by using pytest. 
+
+```
+pytest
+
+``` 
