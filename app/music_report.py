@@ -125,14 +125,12 @@ def AudioAnalysis(artist_uri):
     html="<strong>Artist Analysis</strong>"
     html+="<p>Information and recommendations for the selected artist</p>"
     html+=f"<p>{artist_music}</p>"
-    #html+='<p>'+str(ArtistMusic(artist_uri))+'</p>'
-    #html+='<p>'+str(ArtistRecommendations(artist_uri))+'</p>'
 
     html+="<strong>Song Characteristics Analysis:</strong>"
 
     html+="<p>See attached images for a histogram of popularity, a scatterplot between popularity and the most correlated variable, and a scatterplot between popularity and the least correlated variable</p>"
     
-    html+="<strong>See the attached csv for the characteristics of each song by the artist</strong>"
+    html+="<strong>See the attached CSV file for the characteristics of each song by the artist</strong>"
 
     client = SendGridAPIClient(SENDGRID_API_KEY) 
     message = Mail(from_email=SENDER_EMAIL_ADDRESS, to_emails=SENDER_EMAIL_ADDRESS, subject=subject, html_content=html)
