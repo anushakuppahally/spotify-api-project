@@ -1,0 +1,8 @@
+#the ".codeclimate.yml" file
+
+version: "2"
+checks:
+  identical-code:
+    enabled: true
+    config:
+      threshold: 2
