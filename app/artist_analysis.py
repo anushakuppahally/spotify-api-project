@@ -32,31 +32,31 @@ def GetArtist(artist):
 
 #returns information related to the artist 
 def ArtistMusic(artist_uri):
+    artistmusic = []
     r = requests.get(BASE_URL + 'artists/' + str(artist_uri[15:]) + '/albums', 
                  headers=headers,
                  params={'include_groups': 'album', 'limit': 50})
     d = r.json()
-    print("Here are the artist's albums:") 
+    artistmusic.append("Here are the artist's albums:") 
     for album in d['items']: #returns the artist's albums and their release date and the number of total tracks 
-        print(album['name'], ' — Released:', album['release_date'],' — Total Tracks:', album['total_tracks'])
-    print("") #spacing
-    print("Here are the artist's top tracks in the US:")
+        artistmusic.append((album['name'], 'Released:', album['release_date'],'Total Tracks:', album['total_tracks']))
+    artistmusic.append("Here are the artist's top tracks in the US:")
     tracks = spotify.artist_top_tracks(artist_uri,country='US')
     for top in tracks['tracks'][:5]: #returns top 5 tracks in the US 
-        print(top['name'])
-    print("")
+        artistmusic.append(top['name'])
+    return artistmusic
 
 #returns recommendations for the entered artist 
 def ArtistRecommendations(artist_uri):
+    recommendations = []
     recs = spotify.recommendations(seed_artists=[artist_uri])
-    print("Here are recommended tracks based on the artist entered:") #returns recommended tracks 
-    for track in recs['tracks']:
-        print(track['name'],"by",track['artists'][0]['name']) #returns track name and artist
-    print("") #spacing
-    print("Here are some other related artists based on the artist entered:") 
+    for track in recs['tracks']: #returns recommended tracks 
+        recommendations.append((track['name'],"by",track['artists'][0]['name'])) #returns track name and artist
+    recommendations.append("Here are some other related artists based on the artist entered:") 
     artistrecs = spotify.artist_related_artists(artist_uri)
     for person in artistrecs['artists']: #returns related artists 
-        print(person['name'])
+        recommendations.append(person['name'])
+    return recommendations
 
 def main():
     artist = input("Please enter the name of an artist: ") #user input 

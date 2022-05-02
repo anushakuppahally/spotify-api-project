@@ -118,13 +118,20 @@ def AudioAnalysis(artist_uri):
     plt.savefig(reports_dir + scat_file_name2)
 
     artist_music = ArtistMusic(artist_uri)
-    #artist_recs = ArtistRecommendations()
+    artist_recs = ArtistRecommendations(artist_uri)
 
     #email
     subject="[Email Report]: Artist Analysis"
-    html="<strong>Artist Analysis</strong>"
-    html+="<p>Information and recommendations for the selected artist</p>"
-    html+=f"<p>{artist_music}</p>"
+    html="<strong>Artist Information</strong>"
+    html+="<p>Information and recommendations for the selected artist:</p>"
+    
+    #looping through first function 
+    for i in artist_music:
+        html+=f"<p>{i}</p>"
+
+    #looping through second function
+    for j in artist_recs:
+        html+=f"<p>{j}</p>"
 
     html+="<strong>Song Characteristics Analysis:</strong>"
 

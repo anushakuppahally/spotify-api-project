@@ -55,5 +55,4 @@ Run tests by using pytest.
 
 ```
 pytest
-
 ``` 
