@@ -29,3 +29,4 @@ def test_artistsongrecs():
 def test_artistrecs():
     results = ArtistRecs("spotify:artist:06HL4z0CvFAxyc27GXpf02")
     assert isinstance(results,list)
+    assert isinstance(results[0],str)

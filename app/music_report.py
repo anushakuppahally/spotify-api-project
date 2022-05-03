@@ -123,34 +123,44 @@ def AudioAnalysis(artist_uri):
     artist_top = ArtistTopTracks(artist_uri)
     artist_songrecs = ArtistSongRecommendations(artist_uri)
     artist_recs = ArtistRecs(artist_uri)
+    artist = spotify.artist(artist_uri)['name']
 
     #email
     subject="[Email Report]: Artist Analysis"
-    html="<strong>Here are the artist's albums:</strong>"
     
+    html=f"<h2>Analysis of {artist}'s Discography</h3>"
+
+    html+=f"<h3>Information about {artist}</h3>"
+    
+    html+=f"<h4>Here are {artist}'s album(s):</h4>"
+
     #looping through first function to get artist albums
     for i in artist_albums:
         html+=f"<p>{i[0]+', '+i[1]+' '+i[2]+', '+i[3]+' '+str(i[4])}</p>"
     
-    html+="<strong>Here are the artist's top tracks:</strong>"
+    html+=f"<h4>Here are {artist}'s top 5 tracks:</h4>"
 
     #looping through second function to get the artist's top 5 tracks 
     for j in artist_top:
         html+=f"<p>{j}</p>"
     
-    html+="<strong>Here are song recommendations based on the artist:</strong>"
+    html+=f"<h4>Here are 5 song recommendations based on {artist}:</h4>"
     for x in artist_songrecs:
         html+=f"<p>{x[0] + ' ' + x[1] + ' ' + x[2]}</p>"
     
-    html+="<strong>Here are artist recommendations based on the artist:</strong>"
+    html+=f"<h4>Here are 5 artist recommendations based on {artist}:</h4>"
     for g in artist_recs:
         html+=f"<p>{g}</p>"
 
-    html+="<strong>Song Characteristics Analysis:</strong>"
+    html+="<h3>Song Characteristics Analysis:</h3>"
 
+    html+=f"<h4>Data visualization based on {artist}'s discography:</h4>"
+    
     html+="<p>See attached images for a histogram of popularity, a scatterplot between popularity and the most correlated variable, and a scatterplot between popularity and the least correlated variable.</p>"
     
-    html+="<strong>See the attached CSV file for the characteristics of each song by the artist.</strong>"
+    html+=f"<h4>See the attached CSV file for the characteristics of each song by {artist}</h4>"
+
+    html+="<p>Thank you!</p>"
 
     client = SendGridAPIClient(SENDGRID_API_KEY) 
     message = Mail(from_email=SENDER_EMAIL_ADDRESS, to_emails=SENDER_EMAIL_ADDRESS, subject=subject, html_content=html)

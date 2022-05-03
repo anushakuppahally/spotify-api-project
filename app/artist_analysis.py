@@ -46,16 +46,16 @@ def ArtistTopTracks(artist_uri): #returns artist's top 5 tracks
         artisttracks.append(top['name'])
     return artisttracks
 
-def ArtistSongRecommendations(artist_uri): #returns song recommendations based on the artist
+def ArtistSongRecommendations(artist_uri): #returns 5 song recommendations based on the artist
     songrecs = []
-    recs = spotify.recommendations(seed_artists=[artist_uri])
+    recs = spotify.recommendations(seed_artists=[artist_uri],limit = 5)
     for track in recs['tracks']: #returns recommended tracks 
         songrecs.append((track['name'],"by",track['artists'][0]['name'])) #returns track name and artist
     return songrecs
 
-def ArtistRecs(artist_uri): #returns artist recommendations based on the artist 
+def ArtistRecs(artist_uri): #returns 5 artist recommendations based on the artist 
     artistrecs = []
     relatedartists = spotify.artist_related_artists(artist_uri)
-    for person in relatedartists['artists']: #returns related artists 
+    for person in relatedartists['artists'][:5]: #returns related artists 
         artistrecs.append(person['name'])
     return artistrecs
