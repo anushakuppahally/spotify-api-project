@@ -4,6 +4,32 @@ from app.artist_analysis import ArtistTopTracks
 from app.artist_analysis import ArtistSongRecommendations
 from app.artist_analysis import ArtistRecs
 
+import os
+import spotipy
+import requests
+from dotenv import load_dotenv
+from spotipy.oauth2 import SpotifyClientCredentials
+
+load_dotenv()
+
+CLIENT_ID = os.getenv('SPOTIPY_CLIENT_ID')
+CLIENT_SECRET = os.getenv('SPOTIPY_CLIENT_SECRET')
+spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
+BASE_URL = 'https://api.spotify.com/v1/'
+AUTH_URL = 'https://accounts.spotify.com/api/token'
+auth_response = requests.post(AUTH_URL, {
+        'grant_type': 'client_credentials',
+        'client_id': CLIENT_ID,
+        'client_secret': CLIENT_SECRET,
+    })
+
+#convert the response to json
+auth_response_data = auth_response.json()
+
+#save the access token
+access_token = auth_response_data['access_token']
+headers = {'Authorization': 'Bearer {token}'.format(token=access_token)}
+
 def test_getartist():
     assert GetArtist("Taylor Swift") == "spotify:artist:06HL4z0CvFAxyc27GXpf02"
 
