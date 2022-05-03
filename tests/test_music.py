@@ -1,5 +1,4 @@
 from app.music_report import GetCharacteristics
-from app.music_report import AudioAnalysis
 
 id = "spotify:track:51QEyJI5M7uyd8DOh9tqQY" #Buzzcut Season by Lorde
 

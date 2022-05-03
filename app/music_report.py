@@ -1,5 +1,5 @@
+from inspect import getargs
 import os
-from select import select
 import sys
 import spotipy
 import pandas as pd
@@ -14,8 +14,10 @@ import matplotlib.pyplot as plt
 
 #using function output in email
 from app.artist_analysis import GetArtist
-from app.artist_analysis import ArtistMusic
-from app.artist_analysis import ArtistRecommendations
+from app.artist_analysis import ArtistAlbums
+from app.artist_analysis import ArtistTopTracks
+from app.artist_analysis import ArtistSongRecommendations
+from app.artist_analysis import ArtistRecs
 
 load_dotenv()
 
@@ -117,27 +119,38 @@ def AudioAnalysis(artist_uri):
     scat_file_name2 = "least_correlated.png"
     plt.savefig(reports_dir + scat_file_name2)
 
-    artist_music = ArtistMusic(artist_uri)
-    artist_recs = ArtistRecommendations(artist_uri)
+    artist_albums = ArtistAlbums(artist_uri)
+    artist_top = ArtistTopTracks(artist_uri)
+    artist_songrecs = ArtistSongRecommendations(artist_uri)
+    artist_recs = ArtistRecs(artist_uri)
 
     #email
     subject="[Email Report]: Artist Analysis"
-    html="<strong>Artist Information</strong>"
-    html+="<p>Information and recommendations for the selected artist:</p>"
+    html="<strong>Here are the artist's albums:</strong>"
     
-    #looping through first function 
-    for i in artist_music:
-        html+=f"<p>{i}</p>"
+    #looping through first function to get artist albums
+    for i in artist_albums:
+        html+=f"<p>{i[0]+', '+i[1]+' '+i[2]+', '+i[3]+' '+str(i[4])}</p>"
+    
+    html+="<strong>Here are the artist's top tracks:</strong>"
 
-    #looping through second function
-    for j in artist_recs:
+    #looping through second function to get the artist's top 5 tracks 
+    for j in artist_top:
         html+=f"<p>{j}</p>"
+    
+    html+="<strong>Here are song recommendations based on the artist:</strong>"
+    for x in artist_songrecs:
+        html+=f"<p>{x[0] + ' ' + x[1] + ' ' + x[2]}</p>"
+    
+    html+="<strong>Here are artist recommendations based on the artist:</strong>"
+    for g in artist_recs:
+        html+=f"<p>{g}</p>"
 
     html+="<strong>Song Characteristics Analysis:</strong>"
 
-    html+="<p>See attached images for a histogram of popularity, a scatterplot between popularity and the most correlated variable, and a scatterplot between popularity and the least correlated variable</p>"
+    html+="<p>See attached images for a histogram of popularity, a scatterplot between popularity and the most correlated variable, and a scatterplot between popularity and the least correlated variable.</p>"
     
-    html+="<strong>See the attached CSV file for the characteristics of each song by the artist</strong>"
+    html+="<strong>See the attached CSV file for the characteristics of each song by the artist.</strong>"
 
     client = SendGridAPIClient(SENDGRID_API_KEY) 
     message = Mail(from_email=SENDER_EMAIL_ADDRESS, to_emails=SENDER_EMAIL_ADDRESS, subject=subject, html_content=html)

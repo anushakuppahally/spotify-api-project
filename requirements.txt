@@ -3,6 +3,7 @@
 python-dotenv #to manage environment variables
 spotipy #python library for spotify api
 pandas #data processing
+seaborn #data visualization
 requests #web requests
 sendgrid==6.6.0 #email sender
 pytest #testing

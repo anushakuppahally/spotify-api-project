@@ -1,4 +1,3 @@
-from inspect import getargs
 import os
 import spotipy
 import requests
@@ -30,46 +29,33 @@ def GetArtist(artist):
     artist_uri = result['tracks']['items'][0]['artists'][0]['uri']
     return artist_uri
 
-#returns information related to the artist 
-def ArtistMusic(artist_uri):
-    artistmusic = []
+def ArtistAlbums(artist_uri): #returns the artist's albums
+    artistalbums = []
     r = requests.get(BASE_URL + 'artists/' + str(artist_uri[15:]) + '/albums', 
                  headers=headers,
                  params={'include_groups': 'album', 'limit': 50})
     d = r.json()
-    artistmusic.append("Here are the artist's albums:") 
     for album in d['items']: #returns the artist's albums and their release date and the number of total tracks 
-        artistmusic.append((album['name'], 'Released:', album['release_date'],'Total Tracks:', album['total_tracks']))
-    artistmusic.append("Here are the artist's top tracks in the US:")
+        artistalbums.append((album['name'], 'Released:', album['release_date'],'Total Tracks:', album['total_tracks']))
+    return artistalbums
+
+def ArtistTopTracks(artist_uri): #returns artist's top 5 tracks
+    artisttracks = []
     tracks = spotify.artist_top_tracks(artist_uri,country='US')
     for top in tracks['tracks'][:5]: #returns top 5 tracks in the US 
-        artistmusic.append(top['name'])
-    return artistmusic
+        artisttracks.append(top['name'])
+    return artisttracks
 
-#returns recommendations for the entered artist 
-def ArtistRecommendations(artist_uri):
-    recommendations = []
+def ArtistSongRecommendations(artist_uri): #returns song recommendations based on the artist
+    songrecs = []
     recs = spotify.recommendations(seed_artists=[artist_uri])
     for track in recs['tracks']: #returns recommended tracks 
-        recommendations.append((track['name'],"by",track['artists'][0]['name'])) #returns track name and artist
-    recommendations.append("Here are some other related artists based on the artist entered:") 
-    artistrecs = spotify.artist_related_artists(artist_uri)
-    for person in artistrecs['artists']: #returns related artists 
-        recommendations.append(person['name'])
-    return recommendations
+        songrecs.append((track['name'],"by",track['artists'][0]['name'])) #returns track name and artist
+    return songrecs
 
-def main():
-    artist = input("Please enter the name of an artist: ") #user input 
-    try:
-        artist_uri = GetArtist(artist)
-        print("") #spacing
-        ArtistMusic(artist_uri)
-        ArtistRecommendations(artist_uri)
-        print("") #spacing
-        
-    except:
-        print("Can't find that artist, try again.") #if spotify can't find the artist entered by the user
-        return None
-
-if __name__ == '__main__':
-    main()
+def ArtistRecs(artist_uri): #returns artist recommendations based on the artist 
+    artistrecs = []
+    relatedartists = spotify.artist_related_artists(artist_uri)
+    for person in relatedartists['artists']: #returns related artists 
+        artistrecs.append(person['name'])
+    return artistrecs
