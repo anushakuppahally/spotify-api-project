@@ -1,11 +1,5 @@
 from app.music_report import GetCharacteristics
 
-from app.artist_analysis import GetArtist
-from app.artist_analysis import ArtistAlbums
-from app.artist_analysis import ArtistTopTracks
-from app.artist_analysis import ArtistSongRecommendations
-from app.artist_analysis import ArtistRecs
-
 import os
 import spotipy
 import requests
