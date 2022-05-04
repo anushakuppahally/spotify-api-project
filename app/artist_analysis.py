@@ -64,7 +64,7 @@ def ArtistTopTracks(artist_uri): #returns artist's top 5 tracks
         artisttracks.append(top['name'])
     return artisttracks
 
-def ArtistSongRecommendations(artist_uri): #returns 5 song recommendations based on the artist
+def ArtistSongRecommendations(artist_uri): 
     '''
     This function returns 5 song recommendations 
     This function uses the artist's URI as an input 
@@ -77,7 +77,7 @@ def ArtistSongRecommendations(artist_uri): #returns 5 song recommendations based
         songrecs.append((track['name'],"by",track['artists'][0]['name'])) #returns track name and artist
     return songrecs
 
-def ArtistRecs(artist_uri): #returns 5 artist recommendations based on the artist 
+def ArtistRecs(artist_uri): 
     '''
     This function returns 5 artist recommendations
     This function uses the artist's URI as an input
