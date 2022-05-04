@@ -36,7 +36,7 @@ def test_getartist():
 def test_artistalbums():
     results = ArtistAlbums("spotify:artist:06HL4z0CvFAxyc27GXpf02")
     assert isinstance(results,list)
-    album = results[0] #album will look like this: ('1989', 'Released:', '2014-10-27', 'Total Tracks:', 13))
+    album = results[0] #album will look like this: ('1989', 'Released:', '2014-10-27', 'Total Tracks:', 13)
     assert len(album) == 5
     assert isinstance(album,tuple)
 
@@ -44,6 +44,8 @@ def test_artisttoptracks():
     results = ArtistTopTracks("spotify:artist:06HL4z0CvFAxyc27GXpf02")
     assert isinstance(results,list)
     assert len(results) == 5
+    track = results[0] #track will look like 'Ribs'
+    assert isinstance(track,str)
 
 def test_artistsongrecs():
     results = ArtistSongRecommendations("spotify:artist:06HL4z0CvFAxyc27GXpf02")

@@ -44,8 +44,16 @@ headers = {'Authorization': 'Bearer {token}'.format(token=access_token)}
 
 #analyzes the tracks of the entered artist and returns insights in an email report, along with artist analysis and recommendations
 def AudioAnalysis(artist_uri):
-    #creates a dataframe with all of the tracks from the artist selected by the user 
-    #then creates data visualizations with this information  
+    '''
+    This function takes artist URI as an input
+    Then, the function creates a dataframe with all of the tracks from the artist URI by calling the GetCharacteristics function
+    After this, the function tests the correlation between popularity and the characteristics
+    The function identifies the variables most and least correlated
+    Then, the function creates visualizations: a histogram of popularity and scatterplots of popularity vs the most and least correlated variables
+    After that, the function creates the email report with the information from artist_analysis
+    The function also attachs the visualizations and a CSV file
+    The function output will be '202' if the email is sent successfully  
+    '''
     
     r = requests.get(BASE_URL + 'artists/' + str(artist_uri[15:]) + '/albums', 
                     headers=headers,
@@ -227,6 +235,12 @@ def AudioAnalysis(artist_uri):
 
 #returns characteristics for a track id
 def GetCharacteristics(id):
+    '''
+    This function returns the characteristics for a track
+    This function uses a track's ID as an input 
+    Then, this function returns a list of strings, floats, and integers
+    Example output: ['Buzzcut Season', 'Pure Heroine', 'Lorde', '2013-09-27', 246755, 67, 0.606, 0.733, 0.62, 0.305, 0.117, -10.525, 0.075, 111.039, 4]
+    '''
     meta = spotify.track(id)
     features = spotify.audio_features(id)
     name = meta['name']
