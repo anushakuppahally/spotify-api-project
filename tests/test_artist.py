@@ -67,4 +67,4 @@ def test_artistrecs():
     assert isinstance(artistrec,str)
 
 def test_dummy():
-    assert True
+    assert 1 + 1 == 2
