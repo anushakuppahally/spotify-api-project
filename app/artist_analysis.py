@@ -17,10 +17,10 @@ auth_response = requests.post(AUTH_URL, {
         'client_secret': CLIENT_SECRET,
     })
 
-# convert the response to JSON
+#convert the response to JSON
 auth_response_data = auth_response.json()
 
-# save the access token
+#save the access token
 access_token = auth_response_data['access_token']
 headers = {'Authorization': 'Bearer {token}'.format(token=access_token)}
 
