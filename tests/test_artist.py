@@ -5,6 +5,7 @@ from app.artist_analysis import ArtistSongRecommendations
 from app.artist_analysis import ArtistRecs
 
 import os
+import pytest 
 import spotipy
 import requests
 from dotenv import load_dotenv
@@ -30,9 +31,11 @@ auth_response_data = auth_response.json()
 access_token = auth_response_data['access_token']
 headers = {'Authorization': 'Bearer {token}'.format(token=access_token)}
 
+@pytest.mark.skipif(os.getenv("CI")=="true", reason="avoid issuing on the CI server") # skips this test on CI
 def test_getartist():
     assert GetArtist("Taylor Swift") == "spotify:artist:06HL4z0CvFAxyc27GXpf02"
 
+@pytest.mark.skipif(os.getenv("CI")=="true", reason="avoid issuing on the CI server") # skips this test on CI
 def test_artistalbums():
     results = ArtistAlbums("spotify:artist:06HL4z0CvFAxyc27GXpf02")
     assert isinstance(results,list)
@@ -40,6 +43,7 @@ def test_artistalbums():
     assert len(album) == 5
     assert isinstance(album,tuple)
 
+@pytest.mark.skipif(os.getenv("CI")=="true", reason="avoid issuing on the CI server") # skips this test on CI
 def test_artisttoptracks():
     results = ArtistTopTracks("spotify:artist:06HL4z0CvFAxyc27GXpf02")
     assert isinstance(results,list)
@@ -47,6 +51,7 @@ def test_artisttoptracks():
     track = results[0] #track will look like 'Ribs'
     assert isinstance(track,str)
 
+@pytest.mark.skipif(os.getenv("CI")=="true", reason="avoid issuing on the CI server") # skips this test on CI
 def test_artistsongrecs():
     results = ArtistSongRecommendations("spotify:artist:06HL4z0CvFAxyc27GXpf02")
     assert isinstance(results,list)
@@ -54,6 +59,7 @@ def test_artistsongrecs():
     assert len(songrec) == 3
     assert isinstance(songrec,tuple)
 
+@pytest.mark.skipif(os.getenv("CI")=="true", reason="avoid issuing on the CI server") # skips this test on CI
 def test_artistrecs():
     results = ArtistRecs("spotify:artist:06HL4z0CvFAxyc27GXpf02")
     assert isinstance(results,list)
