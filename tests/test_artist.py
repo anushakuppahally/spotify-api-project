@@ -65,3 +65,6 @@ def test_artistrecs():
     assert isinstance(results,list)
     artistrec = results[0] #artistrec will look like 'Taylor Swift'
     assert isinstance(artistrec,str)
+
+def test_dummy():
+    assert True
