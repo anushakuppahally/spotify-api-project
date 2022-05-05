@@ -1,4 +1,4 @@
-# Spotify App (Python)
+# Spotify API Project
 
 ## Installation 
 
@@ -47,6 +47,6 @@ python -m app.music_report
 
 Run tests by using pytest. 
 
-```
+```sh
 pytest
 ``` 
