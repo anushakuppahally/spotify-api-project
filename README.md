@@ -39,7 +39,7 @@ Sign up for a Spotify developer's account and create a new app. Locate the Clien
 Get an email report that contains information about the artist, recommendations, and characteristics of their discography:
 
 ```sh
-python -m app.music_report
+python -m app.spotify_service
 
 ```
 
