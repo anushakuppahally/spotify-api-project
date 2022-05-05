@@ -14,7 +14,7 @@ def test_get_artist():
 
 @pytest.mark.skipif(os.getenv("CI")=="true", reason="avoid issuing on the CI server") # skips this test on CI
 def test_verifyartist():
-    artist = service.verify_artist("spotify:artist:06HL4z0CvFAxyc27GXpf02")
+    artist = service.verify_artist("spotify:artist:06HL4z0CvFAxyc27GXpf02") #artist will look like "Taylor Swift"
     assert isinstance(artist,str)
 
 @pytest.mark.skipif(os.getenv("CI")=="true", reason="avoid issuing on the CI server") # skips this test on CI
