@@ -22,7 +22,17 @@ AUTH_URL = 'https://accounts.spotify.com/api/token'
 
 
 class SpotifyService():
+    '''
+    This class holds functions related to the Spotify API
+    These functions perform a variety of queries, including information, recommendations, and analysis
+    The parameters are specified for each function 
+    These functions can be used to construct an email report and can be customized further 
+    '''
     def __init__(self):
+        '''
+        SpotifyService class constructor 
+        Initialize self
+        '''
         self.spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
         auth_response = requests.post(AUTH_URL, {
         'grant_type': 'client_credentials',
@@ -49,6 +59,13 @@ class SpotifyService():
         return artist_uri
 
     def verify_artist(self, artist_uri):
+        '''
+        This function returns the name of an artist
+        After an artist URI is generated from user input, this function uses that URI to find the name of the artist
+        Example return value: "Taylor Swift"
+        This is used to verify that the Spotify search based on user input actually resulted in the artist the user wants to analyze
+        Once this is verified, the app can continue running
+        '''
         select_artist = self.spotify.artist(artist_uri)['name']
         return select_artist
 
